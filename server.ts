@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
 import { createServer as createViteServer } from "vite";
-import path from "path";
-import { fileURLToPath } from "url";
 import { authRoutes } from "./src/server/routes/auth.routes";
 import { carRoutes } from "./src/server/routes/car.routes";
 import { clientRoutes } from "./src/server/routes/client.routes";
@@ -19,18 +17,14 @@ import { assistanceRoutes } from "./src/server/routes/assistance.routes";
 import { analyticsRoutes } from "./src/server/routes/analytics.routes";
 import { insuranceRoutes } from "./src/server/routes/insurance.routes";
 import { calendarRoutes } from "./src/server/routes/calendar.routes";
-import { financialRoutes } from "./src/server/routes/financial.routes";
 import { NotificationService } from "./src/server/services/notification.service.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
 
   app.use(cors());
-  app.use(express.json({ limit: '10mb' }));
+  app.use(express.json({ limit: "10mb" }));
 
   // API Routes
   app.use("/api/auth", authRoutes);
@@ -49,33 +43,26 @@ async function startServer() {
   app.use("/api/analytics", analyticsRoutes);
   app.use("/api/insurance", insuranceRoutes);
   app.use("/api/calendar", calendarRoutes);
-  app.use("/api/financial", financialRoutes);
 
   // Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  // Vite middleware for development
+  // DEV ONLY
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
-    // Serve static files in production
-    
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    
-    // Run deadline check daily (simulated every 24h)
+    console.log("Server running on port " + PORT);
+
     NotificationService.checkDeadlines();
-    setInterval(() => {
-      NotificationService.checkDeadlines();
-    }, 24 * 60 * 60 * 1000);
+    setInterval(NotificationService.checkDeadlines, 86400000);
   });
 }
 
