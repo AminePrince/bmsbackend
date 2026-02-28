@@ -19,7 +19,7 @@ import { assistanceRoutes } from "./src/server/routes/assistance.routes.js";
 import { analyticsRoutes } from "./src/server/routes/analytics.routes.js";
 import { insuranceRoutes } from "./src/server/routes/insurance.routes.js";
 import { calendarRoutes } from "./src/server/routes/calendar.routes.js";
-import { financialRoutes } from "./src/server/routes/financial.routes.js";
+import { financialRoutes } from "./src/server/routes/financial.routes";
 import { NotificationService } from "./src/server/services/notification.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
